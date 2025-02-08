@@ -1,3 +1,6 @@
+
+![chat](https://github.com/user-attachments/assets/e55d7f3e-225e-400a-a3c6-4f97c28fa8d7)
+
 ## Overview
 This repository contains the implementation of a chatting application, aiming to connect people accross the world with a minimal appearance and features. Its environment is very similar to telegram and its core 
 backend is implemented using django, and its frontend using raw html and css and js. 
