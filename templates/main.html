@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/main-left.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/main-right.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/mobile/main-left.css' %}">
+{#    <link rel="stylesheet" type="text/css" href="{% static 'styles/mobile/main-right.css' %}">#}
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+            --third-color: {{ user_theme.color3 }};
+        }
+    </style>
+    <script src="{% static 'scripts/jquery-3.3.1.js' %}"></script>
+    <script>
+            {#const x="{{ user.username }}"#}
+            {#let s_interval#}
+            {#const data='{{ qs_json }}'#}
+            {#const rdata=JSON.parse(data.replace(/&quot;/g,'"'))#}
+            function compare(a,b){
+                if(a['username']<b['username'])
+                    return -1
+                else
+                    return 1
+            }
+            function search_input(){
+                $.ajax({
+                    data:$(this).serialize(),
+                    url:"{% url 'get_users' %}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    error:(error)=>console.log(JSON.stringify(error))
+                    }).done(response=>{
+                        const data=JSON.parse(response)
+                        let x=document.getElementById('search-input')
+                        let div=document.getElementById('search-result')
+                        let username='{{ user.username }}'
+                        div.innerHTML=""
+                        let arr=data.filter(item=>item['username'].startsWith(x.value) && item['username']!=="{{ user.username }}")
+                        arr.sort(compare)
+                        if(x.value.length>0)
+                            if(arr.length>0)
+                                arr.map(item=>item['username']!=username?div.innerHTML+=
+                                    "<a href='/profile/"+item['username']+"/'><div class='result'>"
+                                    +"<img src='"+item['image']+"'>"
+                                    +"<p>@"+item['username']+"</p></div></a>":""
+                                )
+                            else
+                                div.innerHTML="<div class='result'><p>No Results Found!</p></div>"
+                    })
+            }
+            function search_click(){
+                document.getElementById("menu-button").style.display="none"
+                document.getElementById("back-button").style.display="block"
+                document.getElementById("chats").style.display="none"
+                document.getElementById("search-result").style.display="block"
+                document.getElementById("side-panel").style.display="none"
+            }
+            function back_click(){
+                document.getElementById("menu-button").style.display="block"
+                document.getElementById("back-button").style.display="none"
+                document.getElementById("chats").style.display="block"
+                document.getElementById("search-result").style.display="none"
+                document.getElementById('search-input').value=""
+                document.getElementById("side-panel").style.display="none"
+            }
+            function menu_click(){
+                if(document.getElementById("side-panel").style.display==="none")
+                    document.getElementById("side-panel").style.display="block"
+                else
+                    document.getElementById("side-panel").style.display="none"
+            }
+            function update_status(){
+                $.ajax({
+                data:$(this).serialize(),
+                url:"{% url 'update_status' %}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error:(error)=>console.log(JSON.stringify(error))
+                })
+            }
+            function get_requests(){
+                $.ajax({
+                    data:$(this).serialize(),
+                    url:"{% url 'get_requests' %}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    error:(error)=>console.log(JSON.stringify(error))
+                    }).done(response=>{
+                        if(response!=="0"){
+                            document.getElementById("circle-up").style.visibility="visible"
+                            document.getElementById("requests-count").innerHTML=response
+                        }
+                        else{
+                            document.getElementById("circle-up").style.visibility="hidden"
+                            document.getElementById("requests-count").innerHTML=""
+                        }
+                    })
+            }
+            get_requests()
+            update_status()
+            window.setInterval(()=>update_status(),60000)
+            window.setInterval(()=>get_requests(),2000)
+    </script>
+    <title>main page</title>
+</head>
+<body>
+<div id="left-div">
+    <div id="up-div">
+        <button onclick="menu_click()" id="menu-button">
+            <img src="{% static 'images/menu.svg' %}">
+        </button>
+        <img src="{% static 'images/circle.svg' %}" id="circle-up">
+        <button onclick="back_click()" id="back-button">
+            <img src="{% static 'images/back.svg' %}">
+        </button>
+        <input type="text" placeholder="search" oninput="search_input()" onclick="search_click()" id="search-input">
+    </div>
+    {% include 'main_chats.html' %}
+
+    <div id="search-result" style="display: none">
+
+    </div>
+    <div id="side-panel" style="display: none">
+        <a href="{% url 'profile' user.username %}"><div class="side-panel-div">
+            <img src='/static/images/profile-{{ user_theme.name }}.svg' width="16px" height="16px">
+            <p class="side-panel-div-text">Profile</p>
+        </div></a>
+        <a href="{% url 'friends' %}"><div class="side-panel-div">
+            <img src='/static/images/friends-{{ user_theme.name }}.svg' width="16px" height="16px">
+            <p class="side-panel-div-text">Friends</p>
+        </div></a>
+        <a href="{% url 'requests' %}"><div class="side-panel-div">
+            <img src='/static/images/requests-{{ user_theme.name }}.png' width="16px" height="16px">
+            <p class="side-panel-div-text">Requests</p>
+            <p class="side-panel-div-count" id="requests-count"></p>
+        </div></a>
+        <a href="{% url 'themes' %}"><div class="side-panel-div">
+            <img src='/static/images/themes-{{ user_theme.name }}.svg' width="16px" height="16px">
+            <p class="side-panel-div-text">Themes</p>
+        </div></a>
+        <a href="{% url 'create-group' %}"><div class="side-panel-div">
+            <img src='/static/images/group-{{ user_theme.name }}.svg' width="16px" height="16px">
+            <p class="side-panel-div-text">New Group</p>
+        </div></a>
+        <a href="{% url 'logout' %}"><div class="side-panel-div">
+            <img src='/static/images/logout-{{ user_theme.name }}.svg' width="16px" height="16px">
+            <p class="side-panel-div-text">Logout</p>
+        </div></a>
+
+    </div>
+</div>
+
+{% include 'main_chat.html' %}
+
+<script>
+    function handle_page(){
+        if(window.innerHeight > window.innerWidth) {
+            let page = "{{ page }}"
+            if (page === "none") {
+                document.getElementById("main-div").style.display = "none"
+            } else {
+                document.getElementById("left-div").style.display = "none"
+            }
+        }
+    }
+    handle_page()
+    window.addEventListener('resize',function (){
+        handle_page()
+    })
+</script>
+</body>
+</html>

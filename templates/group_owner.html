@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'styles/desktop/group-owner.css' %}">
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+        }
+    </style>
+    <script src="{% static 'scripts/jquery-3.3.1.js' %}"></script>
+    <title>Group Owner</title>
+</head>
+<body>
+<script>
+    let members=[]
+    let adds=[]
+    let owner='{{ group.owner }}'
+    {#let owner=''#}
+    function manage_member(x){
+        if(x!==owner)
+            if(!members.includes(x)){
+                members.push(x)
+                document.getElementById(x).style.backgroundColor="#d5c9c9"
+                document.getElementById(x).style.color="#423b3b"
+            }
+            else{
+                members.splice(members.indexOf(x),1)
+                document.getElementById(x).style.backgroundColor="#423b3b"
+                document.getElementById(x).style.color="#FAEBD7FF"
+            }
+        if(members.length>0)
+            document.getElementById("members-submit").style.display="block"
+        else
+            document.getElementById("members-submit").style.display="none"
+    }
+    function add_member(x){
+        if(!adds.includes(x)){
+            adds.push(x)
+            document.getElementById(x).style.backgroundColor="#d5c9c9"
+            document.getElementById(x).style.color="#423b3b"
+        }
+        else{
+            adds.splice(adds.indexOf(x),1)
+            document.getElementById(x).style.backgroundColor="#423b3b"
+            document.getElementById(x).style.color="#FAEBD7FF"
+        }
+        if(adds.length>0)
+            document.getElementById("friends-submit").style.display="block"
+        else
+            document.getElementById("friends-submit").style.display="none"
+    }
+    function open_friends_div(){
+        document.getElementById('friends-div').style.display='block'
+        document.getElementById('open-friends-div').style.display='none'
+    }
+    function close_friends_div(){
+        document.getElementById('friends-div').style.display='none'
+        document.getElementById('open-friends-div').style.display='block'
+    }
+</script>
+<div id="members-div">
+    <div id="members-div-up">
+        <p>members</p>
+        <form method="post" id="members-submit" style="display: none">
+            {% csrf_token %}
+            <input type="submit" value="remove" class="hover">
+        </form>
+    </div>
+    {% for member in members %}
+        <div class="member hover" id="{{ member.username }}" onclick="manage_member('{{ member.username }}')"><img src="{{ member.image }}" width="50px" height="50px"><p>{{ member.username }}</p></div>
+    {% endfor %}
+
+    <script>
+        $.ajaxSetup()
+        $("#members-submit").submit(function (e){
+            $.ajax({
+            type: 'POST',
+            url: "{% url 'remove_members' group.id %}",
+            data: {csrfmiddlewaretoken:'{{ csrf_token }}',members:members.toString()},
+            success:function (){
+                $("#send-group-message").trigger('reset')
+                get_group_messages(true)
+            },
+            error:function (error){
+                console.log(JSON.stringify(error))
+            }
+        })
+        })
+    </script>
+</div>
+<a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}" width="30px"></a>
+<a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}" width="30px" height="30px"></a>
+<div id="main-div">
+    <p>group info</p>
+    <img src="{{ group.image.url }}" width="100px" height="100px">
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.label != 'Image' and field.label != 'Is public'%}
+                {{ field.label }}:
+                {{ field }}
+                <br>
+            {% endif %}
+        {% endfor %}
+        Image:
+        <input type="file" name="image" accept="image/*" id="id_image"><br>
+        public:
+        {% if group.is_public %}
+            <input type="checkbox" name="is_public" id="id_is_public" checked><br>
+        {% else %}
+            <input type="checkbox" name="is_public" id="id_is_public"><br>
+        {% endif %}
+        <button type="submit" class="hover" id="group_submit">
+            <img src="{% static 'images/edit.svg' %}" width="16px">
+            edit group
+        </button>
+
+    </form>
+    <div id="main-down">
+        <form method="post" action="">
+            {% csrf_token %}
+            <button type="submit" class="hover" id="leave" name="leave">
+                Delete The Group
+            </button>
+        </form>
+        <button id="open-friends-div" class="hover" onclick="open_friends_div()">
+            Add Friends
+        </button>
+    </div>
+
+
+
+</div>
+<p id="error">{{ error }}</p>
+<div id="friends-div" style="display:none;">
+    <div id="friends-div-up">
+        <button id="close-friends-div" class="hover" onclick="close_friends_div()">
+            <img src="/static/images/x-{{ user_theme.name }}.svg" height="16px" width="16px">
+        </button>
+        <p>friends</p>
+        <form method="post" id="friends-submit" style="display: none">
+            {% csrf_token %}
+            <input type="submit" value="add" class="hover">
+        </form>
+    </div>
+    {% for friend in friends %}
+        {% if friend.click %}
+            <div class="friend hover" id="{{ friend.username }}" onclick="add_member('{{ friend.username }}')"><img src="{{ friend.image }}" width="50px" height="50px"><p>{{ friend.username }}</p></div>
+        {% else %}
+            <div class="friend hover" id="{{ friend.username }}"><img src="{{ friend.image }}" width="50px" height="50px"><p>{{ friend.username }}</p></div>
+        {% endif %}
+    {% endfor %}
+
+    <script>
+        $.ajaxSetup()
+        $("#friends-submit").submit(function (e){
+            $.ajax({
+            type: 'POST',
+            url: "{% url 'add_members' group.id %}",
+            data: {csrfmiddlewaretoken:'{{ csrf_token }}',adds:adds.toString()},
+            error:function (error){
+                console.log(JSON.stringify(error))
+            }
+        })
+        })
+    </script>
+</div>
+</body>
+</html>

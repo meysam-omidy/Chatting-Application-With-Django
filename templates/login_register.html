@@ -1,0 +1,51 @@
+{% load static %}
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/login_register.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/mobile/login_register.css' %}">
+    <script type="text/javascript" src="{% static 'scripts/login_register.js' %}"></script>
+    <title>Login-Register</title>
+</head>
+<body>
+    {% if page == 'login' %}
+        <form method="post" action="" id="login-form">
+            {% csrf_token %}
+            <p>Login</p>
+            <input type="text" name="username" placeholder="username"  required id="login-username">
+            <br>
+            <input type="password" name="password" placeholder="password" required id="login-password">
+            <br>
+{#            <input type="submit" value="login" id="login-submit">#}
+            <button type="submit" id="login-submit">
+                <img src="{% static 'images/lock.svg' %}">
+                login
+            </button>
+            <br>
+            <p>Haven't Signed Up Yet?</p>
+            <a href="{% url 'register_user' %}">Sign Up</a>
+        </form>
+        <p id="login_error">{{ error }}</p>
+    {% else %}
+        <form method="POST" action="" id="register_form">
+            {% csrf_token %}
+            <p>register</p>
+            <input type="text" name="name" maxlength="20" required id="id_name" placeholder="name">
+            <br>
+            <input type="text" name="username" maxlength="20" required id="id_username" placeholder="username">
+            <br>
+            <input type="password" name="password1" autocomplete="new-password" required id="id_password1" placeholder="password">
+            <br>
+            <input type="password" name="password2" autocomplete="new-password" required id="id_password2" placeholder="repeat password">
+            <br>
+            <button type="submit" id="register-submit">
+                <img src="{% static 'images/lock.svg' %}">
+                register
+            </button>
+            <br>
+            <p>Already Have An Account?</p>
+            <a href="{% url 'login_user' %}">Login</a>
+        </form>
+        <p id="register_error">{{ error }}</p>
+    {% endif %}
+</body>
+</html>

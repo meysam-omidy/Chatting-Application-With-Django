@@ -1,0 +1,57 @@
+{% load static %}
+<div id="chats">
+    <div id="chats-div">
+    </div>
+    <script>
+        let prev_c=[]
+        function compare_c(a,b){
+            if(a.length!==b.length)
+                return false
+            let check=true
+            for(let i=0;i<a.length;i++)
+                if(!(a[i]['name']===b[i]['name'] && a[i]['image']===b[i]['image'] && a[i]['time']===b[i]['time'] && a[i]['id']===b[i]['id'] && a[i]['t']===b[i]['t'] && a[i]['type']===b[i]['type'] && a[i]['unseen']===b[i]['unseen'])){
+                    check=false
+                    break
+                }
+            return check
+        }
+        function get_chats(c){
+            $.ajax({
+                data:$(this).serialize(),
+                url:"{% url 'get_chats' %}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error:(error)=>console.log(JSON.stringify(error))
+                }).done(response=>{
+                    const data=JSON.parse(response)
+                    if(!c || (c && !compare_c(prev_c,data))) {
+                        prev_c = data
+                        let chats_div = document.getElementById('chats-div')
+                        chats_div.innerHTML = ""
+                        data.map(item => {
+                            let unseen=item['unseen']===0?"":item['unseen']
+                            if(item['type']==='chat')
+                                chats_div.innerHTML+=`<a href="/?message_to=${item['id']}"><div class="chat">
+                                <img src="${item['image']}" class="chat-img">
+                                <p class="chat-name">@${item['name']}</p>
+                                <div class="time-seens">
+                                    <div class="chat-time">${item['time']}</div>
+                                    <div class="chat-seen">${unseen}</div>
+                                </div></div></a>`
+                            else
+                                chats_div.innerHTML+=`<a href="/?group=${item['id']}"><div class="chat">
+                                <img src="${item['image']}" class="chat-img">
+                                <p class="chat-name">#${item['name']}</p>
+                                <div class="time-seens">
+                                    <div class="chat-time">${item['time']}</div>
+                                    <div class="chat-seen">${unseen}</div>
+                                </div></div></a>`
+                        })
+                    }
+                    })
+                    }
+
+        get_chats(false)
+        window.setInterval(()=>get_chats(true),1000)
+    </script>
+</div>

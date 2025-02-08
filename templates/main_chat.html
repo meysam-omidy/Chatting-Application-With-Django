@@ -1,0 +1,562 @@
+{% load static %}
+<div id="main-div">
+    <script>
+        let timeout=null
+        let deletes=[]
+        let editing_message_id=-1
+        let editing=false
+        let deleting=false
+        function message_hold(id,text){
+            if(!deleting) editing=true
+            else return
+            document.getElementById('edit-message-form').style.display='block'
+            document.getElementById('edit-cancel').style.display='block'
+            document.getElementById('edit-message').value=text
+            editing_message_id=id
+        }
+        function message_clicked(id){
+            if(!editing) deleting=true
+            else return
+            if (!deletes.includes(id)) {
+                deletes.push(id)
+                {#document.getElementById(`message${id}`).style.backgroundColor = "#AAAAFF"#}
+                document.getElementById(`message${id}`).style.backgroundColor = "{{ user_theme.color3 }}"
+            } else {
+                deletes.splice(deletes.indexOf(id), 1)
+                document.getElementById(`message${id}`).style.backgroundColor = ""
+            }
+            if(deletes.length===0){
+                deleting=false
+                document.getElementById("delete-messages-form").style.display='none'
+            }
+            else{
+                deleting=true
+                document.getElementById("delete-messages-form").style.display='block'
+            }
+        }
+        function image_delete(id){
+            if(!editing) deleting=true
+            else return
+            if (!deletes.includes(`image${id}`)) {
+                deletes.push(`image${id}`)
+                {#document.getElementById(`message${id}`).style.backgroundColor = "#AAAAFF"#}
+                document.getElementById(`image${id}`).style.backgroundColor = "{{ user_theme.color3 }}"
+            } else {
+                deletes.splice(deletes.indexOf(`image${id}`), 1)
+                document.getElementById(`image${id}`).style.backgroundColor = ""
+            }
+            if(deletes.length===0){
+                deleting=false
+                document.getElementById("delete-messages-form").style.display='none'
+            }
+            else{
+                deleting=true
+                document.getElementById("delete-messages-form").style.display='block'
+            }
+        }
+        function message_mouse_up(id,text){
+            message_clicked(id)
+            clearTimeout(timeout)
+            timeout=null
+        }
+        function message_mouse_down(id,text){
+            timeout=window.setTimeout(function (){
+                message_hold(id,text)
+                clearTimeout(timeout)
+                timeout=null
+            },500)
+        }
+        function cancel_edit(){
+            editing=false
+            document.getElementById('edit-message-form').style.display='none'
+            document.getElementById('edit-cancel').style.display='none'
+        }
+        function get_time(new_time){
+            switch (new_time.split("-")[1]){
+                case "01":
+                    return `<div class="time-stone">January ${new_time.split("-")[2]}</div>`
+                case "02":
+                    return `<div class="time-stone">February ${new_time.split("-")[2]}</div>`
+                case "03":
+                    return `<div class="time-stone">March ${new_time.split("-")[2]}</div>`
+                case "04":
+                    return `<div class="time-stone">April ${new_time.split("-")[2]}</div>`
+                case "05":
+                    return `<div class="time-stone">May ${new_time.split("-")[2]}</div>`
+                case "06":
+                    return `<div class="time-stone">June ${new_time.split("-")[2]}</div>`
+                case "07":
+                    return `<div class="time-stone">July ${new_time.split("-")[2]}</div>`
+                case "08":
+                    return `<div class="time-stone">August ${new_time.split("-")[2]}</div>`
+                case "09":
+                    return `<div class="time-stone">September ${new_time.split("-")[2]}</div>`
+                case "10":
+                    return `<div class="time-stone">October ${new_time.split("-")[2]}</div>`
+                case "11":
+                    return `<div class="time-stone">November ${new_time.split("-")[2]}</div>`
+                case "12":
+                    return `<div class="time-stone">December ${new_time.split("-")[2]}</div>`
+            }
+        }
+        function preview_image(){
+            let form = document.getElementById("image-form")
+            form.style.display='none'
+            document.getElementById('preview_div').style.display='block'
+            let preview = document.getElementById('preview_image');
+            let file    =  document.getElementById('id_image').files[0];
+            let reader  = new FileReader();
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+            }
+        }
+        function preview_send(){
+            document.getElementById('preview_div').style.display='none'
+            document.getElementById('image-form').style.display='block'
+            $('#image-form').submit()
+        }
+        function preview_cancel(){
+            document.getElementById('preview_div').style.display='none'
+            document.getElementById('image-form').style.display='block'
+            $('#image-form').trigger('reset')
+        }
+    </script>
+    <div id="preview_div" style="display: none">
+        <img src="" width="100px" height="100px" id="preview_image">
+        <button class="hover" id="preview_cancel" onclick="preview_cancel()">
+            Cancel
+        </button>
+        <button class="hover" id="preview_send" onclick="preview_send()">
+            Send Image
+        </button>
+    </div>
+    {% if friend is not None %}
+        <div id="friend-div">
+            <img src="{{ friend.image.url }}">
+            <div id="username-status">
+                <a href="{% url 'profile' friend.username %}" id="friend-username">@{{ friend.username }}</a>
+                <p id="friend-status"></p>
+            </div>
+            <form id="edit-message-form" style="display: none">
+                {% csrf_token %}
+                <input type="text" name="edit-text" id="edit-message" autocomplete="off" placeholder="edit message">
+            </form>
+            <button id="edit-cancel" class="hover" onclick="cancel_edit()" style="display: none">
+                <img src="{% static 'images/x.svg'%}">
+            </button>
+            <form id="delete-messages-form" style="display: none">
+                <button id="delete-messages" class="hover" type="submit">
+                    <img src="{% static 'images/trash.svg' %}">
+                </button>
+            </form>
+        </div>
+        <div id="messages">
+
+        </div>
+        <div id="message-form">
+
+            <form id="message-form-form">
+                {% csrf_token %}
+                <input type="text" placeholder="message" name="message" autocomplete="off" id="send-message">
+            </form>
+            <form method="post" id="image-form" action="{% url 'send-image' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label id="file_label" class="hover">
+{#                    <input type="file" accept="image/*" name="image">#}
+                    <input type="file" name="image" accept="image/*" required id="id_image" onchange="preview_image()">
+                    <input type="number" name="sender" required id="id_sender" value="{{ user.id }}" hidden>
+                    <input type="number" name="receiver" required id="id_receiver" value="{{ friend.id }}" hidden>
+                    <img src="{% static 'images/image.svg' %}" width="30px" height="30px">
+                </label>
+            </form>
+        </div>
+        <script>
+            let prev_m=[]
+            function compare_m(a,b){
+                if(a.length!==b.length)
+                    return false
+                let check=true
+                for(let i=0;i<a.length;i++)
+                    if(a[i]['type']==='image')
+                        if(!(a[i]['sender']===b[i]['sender'] && a[i]['receiver']===b[i]['receiver'] && a[i]['created']===b[i]['created'] && a[i]['id']===b[i]['id'] && a[i]['image']===b[i]['image']  && a[i]['seen']===b[i]['seen'])){
+                            check=false
+                            break
+                        }
+                    else
+                        if(!(a[i]['sender']===b[i]['sender'] && a[i]['receiver']===b[i]['receiver'] && a[i]['created']===b[i]['created'] && a[i]['id']===b[i]['id'] && a[i]['text']===b[i]['text']  && a[i]['seen']===b[i]['seen'])){
+                            check=false
+                            break
+                        }
+                return check
+            }
+            function get_messages(scroll,c){
+                $.ajax({
+                data:$(this).serialize(),
+                url:"{% url 'get_messages' friend.username %}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error:(error)=>console.log(JSON.stringify(error))
+                }).done(response=>{
+                    const data=JSON.parse(response)
+                    if(!c || (c && !compare_m(prev_m,data))) {
+                        prev_m=data
+                        console.log('yes')
+                        let messages_div=document.getElementById("messages")
+                        let last_time=""
+                        messages_div.innerHTML=""
+                        let friend_username="{{ friend.username }}"
+                        let username="{{ request.user.username }}"
+                        let new_div=document.getElementById("chats-div")
+                        data.map(item=>{
+                            let new_time=item['created'].split(" ")[0]
+                            if(new_time.split("-")[2]!==last_time.split("-")[2]){
+                                messages_div.innerHTML+=get_time(new_time,item)
+                                last_time=new_time
+                            }
+                            if(item["sender"]===username && item["receiver"]===friend_username){
+                                if(item['type']==="image")
+                                    if(item["seen"]==="yes")
+                                        messages_div.innerHTML+=`<div class="image" id="image${item['id']}" onclick="image_delete(${item['id']})"><div class="image-div"><img class="s-image" src="/static/media/${item['image']}"></div><div class="seen-time"><p>${item['time']}</p><img src="static/images/seen.png" id="image-seen" width="24px" height="24px"></div></div>`
+                                    else
+                                        messages_div.innerHTML+=`<div class="image" id="image${item['id']}" onclick="image_delete(${item['id']})"><div class="image-div"><img class="s-image" src="/static/media/${item['image']}" ></div><div class="seen-time"><p>${item['time']}</p></div></div>`
+                                else
+                                    if(item["seen"]==="yes")
+                                        messages_div.innerHTML+=`<div class="message" id="message${item['id']}" onmouseup='message_mouse_up(${item['id']},"${item['text']}")' onmousedown='message_mouse_down(${item['id']},"${item['text']}")'><div><p class="s-message" >${item['text']}&nbsp&nbsp${item['time']}</p></div><img src="static/images/seen.png" id="seen" width="24px" height="24px"></div>`
+                                    else
+                                        messages_div.innerHTML+=`<div class="message" id="message${item['id']}" onmouseup='message_mouse_up(${item['id']},"${item['text']}")' onmousedown='message_mouse_down(${item['id']},"${item['text']}")'><div><p class="s-message" >${item['text']}&nbsp&nbsp${item['time']}</p></div></div>`
+                            }
+                            else{
+                                if(item['type']==="image")
+                                    messages_div.innerHTML+=`<div class="image"><div class="image-div"><img class="r-image" src="/static/media/${item['image']}" ><p>${item['time']}</p></div></div>`
+                                else
+                                    messages_div.innerHTML+=`<div class="message"><div><p class="r-message" >${item['text']}&nbsp&nbsp${item['time']}</p></div></div>`
+                            }
+
+                        })
+                        if(scroll)
+                            messages_div.scrollTo(0,1000000)
+                    }
+
+                })
+            }
+            function get_status(){
+                $.ajax({
+                data:$(this).serialize(),
+                url:"{% url 'get_status' friend.id %}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error:(error)=>console.log(JSON.stringify(error))
+                }).done(response=>{
+                    let friend_status=document.getElementById("friend-status")
+                    if(response==="online")
+                        friend_status.innerHTML=response.replaceAll("\"","")
+                    else
+                        friend_status.innerHTML=`last seen at ${response.replaceAll("\"","")}`
+                })
+            }
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            get_messages(true,false)
+            get_status()
+            $("#message-form-form").submit(function (e){
+                e.preventDefault()
+                {#let serialized=$(this).serialize()#}
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'send_message' friend.username %}",
+                    data: $(this).serialize(),
+                    success:function (){
+                        $("#message-form-form").trigger('reset')
+                        get_messages(true,false)
+
+                    },
+                    error:function (error){
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            $("#edit-message-form").submit(function (e){
+                e.preventDefault()
+                let editing_message_text=document.getElementById('edit-message').value
+                $.ajax({
+                    type: 'POST',
+                    url: `/edit_message/${editing_message_id}/${editing_message_text}/`,
+                    data: $(this).serialize(),
+                    success: function () {
+                        $("#edit-message-form").trigger('reset')
+                        document.getElementById('edit-message-form').style.display='none'
+                        document.getElementById('edit-cancel').style.display='none'
+                        editing=false
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            $("#delete-messages-form").submit(function (e){
+                e.preventDefault()
+                $.ajax({
+                    type: 'POST',
+                    url: {% url 'delete_messages' %},
+                    data: {csrfmiddlewaretoken:'{{ csrf_token }}',deletes:deletes.toString()},
+                    success: function () {
+                        deletes=[]
+                        deleting=false
+                        document.getElementById('delete-messages-form').style.display='none'
+                        get_messages(true,false)
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            $("#image-form").submit(function (e){
+                e.preventDefault()
+                let formData = new FormData()
+                formData.append("csrfmiddlewaretoken", '{{ csrf_token }}')
+                formData.append("sender", '{{ user.id }}')
+                formData.append("receiver", '{{ friend.id }}')
+                formData.append("image", document.getElementById('id_image').files[0])
+                $.ajax({
+                    type: 'POST',
+                    url: {% url 'send-image' %},
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    {#data: {csrfmiddlewaretoken:'{{ csrf_token }}'},#}
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    success: function () {
+                        $("#image-form").trigger('reset')
+                        get_messages(true,false)
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            window.setInterval(()=>get_messages(false,true),1000)
+            window.setInterval(()=>get_status(),10000)
+        </script>
+
+
+    {% elif group is not None %}
+        <div id="friend-div">
+            <img src="{{ group.image.url }}" width="49px" height="49px">
+            <div id="username-status">
+                <a href="{% url 'group' group.id %}" id="friend-username">#{{ group.name }}</a>
+                <p id="friend-status"></p>
+            </div>
+            <form id="edit-message-form" style="display: none">
+                {% csrf_token %}
+                <input type="text" name="edit-text" id="edit-message" autocomplete="off" placeholder="edit message">
+            </form>
+            <button id="edit-cancel" class="hover" onclick="cancel_edit()" style="display: none">
+                <img src="{% static 'images/x.svg'%}" width="40px" height="40px">
+            </button>
+            <form id="delete-messages-form" style="display: none">
+                <button id="delete-messages" class="hover" type="submit">
+                    <img src="{% static 'images/trash.svg' %}" width="40px" height="40px">
+                </button>
+            </form>
+        </div>
+        <div id="messages">
+        </div>
+        <div id="message-form">
+            {% if allowed == False %}
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="submit" value="join this group" id="join-group">
+                </form>
+            {% else %}
+                <form id="send-group-message">
+                    {% csrf_token %}
+                    <input type="text" placeholder="message" name="message" autocomplete="off" id="send-message">
+                </form>
+                <form method="post" id="image-form" action="{% url 'send-image' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label id="file_label" class="hover">
+    {#                    <input type="file" accept="image/*" name="image">#}
+                        <input type="file" name="image" accept="image/*" required id="id_image" onchange="preview_image()">
+                        <input type="number" name="sender" required id="id_sender" value="{{ user.id }}" hidden>
+                        <input type="number" name="receiver" required id="id_receiver" value="{{ group.id }}" hidden>
+                        <img src="{% static 'images/image.svg' %}" width="30px" height="30px">
+                    </label>
+                </form>
+            {% endif %}
+        </div>
+
+        <script>
+            let prev_m=[]
+            function compare_gm(a,b) {
+                if (a.length !== b.length)
+                    return false
+                let check = true
+                for (let i = 0; i < a.length; i++) {
+                    if (a[i]['type'] === "text"){
+                        if (!(a[i]['sender-username'] === b[i]['sender-username'] && a[i]['sender-image'] === b[i]['sender-image'] && a[i]['created'] === b[i]['created'] && a[i]['id'] === b[i]['id'] && a[i]['text'] === b[i]['text'] && a[i]['seens'] === b[i]['seens'])) {
+                            check = false
+                            break
+                        }
+                    }
+                    else{
+                        if (!(a[i]['sender-username'] === b[i]['sender-username'] && a[i]['sender-image'] === b[i]['sender-image'] && a[i]['created'] === b[i]['created'] && a[i]['id'] === b[i]['id'] && a[i]['image'] === b[i]['image'] && a[i]['seens'] === b[i]['seens'])) {
+                            check = false
+                            break
+                        }
+                    }
+                }
+                return check
+            }
+            function get_group_messages(scroll,c){
+                $.ajax({
+                data:$(this).serialize(),
+                url:"{% url 'get_group_messages' group.id %}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error:(error)=>console.log(JSON.stringify(error))
+                }).done(response=>{
+                    const data=JSON.parse(response)
+                    if(!c || (c && !compare_gm(prev_m,data))) {
+                        let messages_div=document.getElementById("messages")
+                        prev_m=data
+                        messages_div.innerHTML=""
+                        let last_time=""
+                        let group_id={{ group.id }}
+                        const username = "{{ request.user.username }}"
+                        data.map(item=>{
+                            let new_time=item['created'].split(" ")[0]
+                            if(new_time.split("-")[2]!==last_time.split("-")[2]){
+                                messages_div.innerHTML+=get_time(new_time,item)
+                                last_time=new_time
+                            }
+                            if(item["sender-username"]===username)
+                                if(item['seens']>1){
+                                    if(item['type']==='text')
+                                        messages_div.innerHTML+=`<div class="message" id="message${item['id']}" onmouseup='message_mouse_up(${item['id']},"${item['text']}")' onmousedown='message_mouse_down(${item['id']},"${item['text']}")'><div><p class="s-message" >${item['text']}&nbsp&nbsp${item['time']}</p></div><img src="static/images/seen.png" id="seen" width="24px" height="24px"></div>`
+                                    else
+                                        messages_div.innerHTML+=`<div class="image" id="image${item['id']}" onclick="image_delete(${item['id']})"><div class="image-div"><img src="/static/media/${item['image']}" class="s-image"></div><div class="seen-time"><p>${item['time']}</p><img src="/static/images/seen.png" id="image-seen" width="24px" height="24px"></div></div>`
+                                }
+                                else{
+                                    if(item['type']==='text')
+                                        messages_div.innerHTML+=`<div class="message" id="message${item['id']}" onmouseup='message_mouse_up(${item['id']},"${item['text']}")' onmousedown='message_mouse_down(${item['id']},"${item['text']}")'><div><p class="s-message" >${item['text']}&nbsp&nbsp${item['time']}</p></div></div>`
+                                    else
+                                        messages_div.innerHTML+=`<div class="image" id="image${item['id']}" onclick="image_delete(${item['id']})"><div class="image-div"><img src="/static/media/${item['image']}" class="s-image" height="119px"></div><div class="seen-time"><p>${item['time']}</p></div></div>`
+                                }
+
+                            else
+                                if(item['type']==='text')
+                                    messages_div.innerHTML+=`<div class="message" id="message${item['id']}" ><a href="/profile/${item['sender-username']}"><img class="group-sender-image" src="${item['sender-image']}"><a/><div><p class="r-message" >${item['text']}&nbsp&nbsp${item['time']}</p></div></div>`
+                                else
+                                    messages_div.innerHTML+=`<div class="image" id="image${item['id']}"><a href="/profile/${item['sender-username']}"><img class="group-sender-image" src="${item['sender-image']}"></a><div class="image-div"><img src="/static/media/${item['image']}" class="r-image"><p>${item['time']}</p></div></div>`
+                        })
+                        if(scroll)
+                            messages_div.scrollTo(0,1000000)
+                    }
+            })}
+            function get_group_status(){
+                $.ajax({
+                data:$(this).serialize(),
+                url:"{% url 'get_group_status' group.id %}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error:(error)=>console.log(JSON.stringify(error))
+                }).done(response=>{
+
+                    let friend_status=document.getElementById("friend-status")
+                    friend_status.innerHTML=response
+                })
+            }
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            get_group_messages(true,false)
+            $("#send-group-message").submit(function (e){
+                e.preventDefault()
+                {#let serialized=$(this).serialize()#}
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'send_group_message' group.id %}",
+                    data: $(this).serialize(),
+                    success:function (){
+                        $("#send-group-message").trigger('reset')
+                        get_group_messages(true)
+                    },
+                    error:function (error){
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            $("#edit-message-form").submit(function (e){
+                e.preventDefault()
+                let editing_message_text=document.getElementById('edit-message').value
+                $.ajax({
+                    type: 'POST',
+                    url: `/edit_group_message/${editing_message_id}/${editing_message_text}/`,
+                    data: $(this).serialize(),
+                    success: function () {
+                        $("#edit-message-form").trigger('reset')
+                        document.getElementById('edit-message-form').style.display='none'
+                        document.getElementById('edit-cancel').style.display='none'
+                        editing=false
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            $("#delete-messages-form").submit(function (e){
+                e.preventDefault()
+                $.ajax({
+                    type: 'POST',
+                    url: {% url 'delete_group_messages' %},
+                    data: {csrfmiddlewaretoken:'{{ csrf_token }}',deletes:deletes.toString()},
+                    success: function () {
+                        deletes=[]
+                        deleting=false
+                        document.getElementById('delete-messages-form').style.display='none'
+                        get_group_messages(true,false)
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            $("#image-form").submit(function (e){
+                e.preventDefault()
+                let formData = new FormData()
+                formData.append("csrfmiddlewaretoken", '{{ csrf_token }}')
+                formData.append("sender", '{{ user.id }}')
+                formData.append("receiver", '{{ group.id }}')
+                formData.append("image", document.getElementById('id_image').files[0])
+                $.ajax({
+                    type: 'POST',
+                    url: {% url 'send_group_image' %},
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    {#data: {csrfmiddlewaretoken:'{{ csrf_token }}'},#}
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    success: function () {
+                        $("#image-form").trigger('reset')
+                        {#get_group_messages(true,false)#}
+                        get_group_messages(true,false)
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error))
+                    }
+                })
+            })
+            get_group_status()
+            window.setInterval(()=>get_group_messages(false,true),1000)
+            window.setInterval(()=>get_group_status(),10000)
+        </script>
+    {% endif %}
+</div>

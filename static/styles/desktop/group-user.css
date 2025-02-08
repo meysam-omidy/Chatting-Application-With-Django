@@ -1,0 +1,184 @@
+:root{
+    --primary-color: antiquewhite;
+    --secondary-color: #423b3b;
+}
+body{
+    background-color: var(--primary-color);
+}
+#back img{
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    margin-top: 55px;
+    margin-left: 550px;
+    position: fixed;
+}
+#home{
+    margin-top: 55px;
+    margin-left: 730px;
+    position: fixed;
+}
+#group-div{
+    background-color: var(--secondary-color);
+    position: fixed;
+    color: var(--primary-color);
+    width: 350px;
+    height: 400px;
+    margin-top: 90px;
+    border-radius: 15px;
+    margin-left: 550px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+#group-div p{
+    text-align: center;
+    font-size: 18px;
+}
+#group-div img{
+    margin-left: 125px;
+    border-radius: 50%;
+}
+#main-down{
+    width: 100%;
+    height: 30px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin-top: 50px;
+}
+#leave{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    background-color: var(--primary-color);
+    width: 140px;
+    color: var(--secondary-color);
+    height: 30px;
+    font-size: 15px;
+}
+#open-friends-div{
+    background-color: var(--primary-color);
+    height: 30px;
+    margin-left: 60px;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    font-size: 15px;
+    width: 120px;
+}
+#members-div{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    width: 350px;
+    height: 600px;
+    margin-top: 60px;
+    border-radius: 15px;
+    margin-left: 150px;
+    position: fixed;
+}
+#members-div-up{
+    width: 100%;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 270px 80px;
+}
+#members-div-up p{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    text-align: center;
+}
+#members-submit{
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+#members-submit input{
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    margin-top: 10px;
+    height: 30px;
+}
+.member{
+    height: 60px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 80px 270px;
+    /*background-color: var(--primary-color;*/
+    border-top: 1px solid var(--primary-color);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.member img{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    margin-left: 10px;
+    margin-top: 5px;
+    border-radius: 50%;
+}
+.member p{
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+#friends-div{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    width: 350px;
+    height: 600px;
+    margin-top: 60px;
+    border-radius: 15px;
+    margin-left: 1000px;
+    position: fixed;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+#friends-div-up{
+    width: 100%;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 80px 190px 80px;
+}
+#friends-div-up button{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    width: 24px;
+    height: 24px;
+    background-color: var(--secondary-color);
+    border: none;
+    margin-top: 13px;
+    margin-left: 10px;
+}
+#friends-div-up p{
+    grid-column-start: 2;
+    grid-column-end: 3;
+    text-align: center;
+}
+#friends-submit{
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+#friends-submit input{
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    margin-top: 10px;
+    height: 30px;
+}
+.friend{
+    height: 60px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 80px 270px;
+    /*background-color: var(--primary-color;*/
+    border-top: 1px solid var(--primary-color);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.friend img{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    margin-left: 10px;
+    margin-top: 5px;
+    border-radius: 50%;
+}
+.friend p{
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.hover{
+    cursor: pointer;
+}

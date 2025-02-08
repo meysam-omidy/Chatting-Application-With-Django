@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'styles/desktop/create-group.css' %}">
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+        }
+    </style>
+    <title>group page</title>
+</head>
+<body>
+{% if page == 'create' %}
+    <a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}"></a>
+    <a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}"></a>
+    <div id="main-div">
+        <p>create group</p>
+        <img src="{% static 'media/groups/avatar.svg' %}" width="100px" height="100px">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                <label>
+                    {{ field.label }}:
+                    {{ field }}
+                </label>
+                <br>
+            {% endfor %}
+            <button type="submit" id="add-group">
+                <img src="{% static 'images/add.png' %}">
+                add group
+            </button>
+        </form>
+    </div>
+{% else %}
+{% endif %}
+</body>
+</html>

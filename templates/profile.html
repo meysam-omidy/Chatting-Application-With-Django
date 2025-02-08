@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/profile.css' %}">
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+        }
+    </style>
+    <script src="{% static 'scripts/jquery-3.3.1.js' %}"></script>
+    <title>profile page</title>
+</head>
+<body>
+    {% if friend.username == user.username %}
+        <a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}"></a>
+        <a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}"></a>
+        <div id="main-div">
+            <p>profile</p>
+            <img src="{{ user.image.url }}" width="100px" height="100px" id="profile-image">
+            <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.label != 'Image'%}
+                    <label>
+                        {{ field.label }}:
+                        {{ field }}
+                    </label>
+                    <br>
+                    {% endif %}
+                {% endfor %}
+                Image:
+                <input type="file" name="image" accept="image/*" id="id_image">
+                <button type="submit" id="profile_submit">
+                    <img src="{% static 'images/edit.svg' %}">
+                    edit profile
+                </button>
+            </form>
+        </div>
+        <p id="error">{{ error }}</p>
+    {% else %}
+        <a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}"></a>
+        <a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}"></a>
+        <div id="friend-div">
+            <p>profile</p>
+            <img src="{{ friend.image.url }}" width="100px" height="100px" id="profile-image">
+            <p id="name-p">Name:&nbsp&nbsp&nbsp{{ friend.name }}</p>
+            <p id="username-p">Username:&nbsp&nbsp&nbsp{{ friend.username }}</p>
+            <p id="bio-p">Bio:&nbsp&nbsp&nbsp{{ friend.Bio }}</p>
+            <div id="bottom-div">
+                <form method="post" action="">
+                {% csrf_token %}
+                    {% if is_friend == 0 %}
+                        <input type="submit" name="request" id="request" value="request">
+                    {% elif is_friend == 1 %}
+                        <input type="submit" name="accept" id="accept" value="accept">
+                        <input type="submit" name="reject" id="reject" value="reject">
+                    {% elif is_friend == 2 %}
+                        <input type="submit" name="requested" id="requested" value="requested">
+                    {% else %}
+                        <button id="message">
+                            <a href="/?message_to={{ friend.id }}">message</a>
+                        </button>
+                        <input type="submit" name="unfriend" id="unfriend" value="unfriend">
+                    {% endif %}
+                </form>
+            </div>
+            <script>
+                $("#message").submit(function (e){
+                    e.preventDefault()
+                })
+                update_status()
+            </script>
+        </div>
+        <script>
+
+        </script>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/friends.css' %}">
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+        }
+    </style>
+    <title>Friends</title>
+</head>
+<body>
+<a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}"></a>
+<a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}"></a>
+<div id="friends">
+    <p>Friends</p>
+    {% for friend in friends %}
+        <div class="friend">
+            <img src="{{ friend.image }}">
+            <a href="/profile/{{ friend.username }}">@{{ friend.username }}</a>
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" value="{{ friend.username }}" name="username">
+                <input name="unfriend" class="unfriend hover" value="unfriend" type="submit">
+                <a href="/?message_to={{ friend.id }}">
+                    <input name="message" class="message hover" value="message" type="button">
+                </a>
+            </form>
+        </div>
+    {% endfor %}
+    {% if friends|length == 0 %}
+        <p>You Have No Friends</p>
+    {% endif %}
+</div>
+</body>
+</html>

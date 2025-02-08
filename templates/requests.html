@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/requests.css' %}">
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+        }
+    </style>
+    <title>Requests</title>
+</head>
+<body>
+<a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}"></a>
+    <a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}"></a>
+<div id="requests">
+    <p>Requests</p>
+    {% for request in requests %}
+        <div class="request">
+            <img src="{{ request.image }}" width="50px" height="50px">
+            <a href="/profile/{{ request.username }}">@{{ request.username }}</a>
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" value="{{ request.username }}" name="username">
+                <input class="reject hover" type="submit" value="reject" name="reject">
+                <input class="accept hover" type="submit" value="accept" name="accept">
+            </form>
+        </div>
+    {% endfor %}
+    {% if requests|length == 0 %}
+        <p>No Requests Available</p>
+    {% endif %}
+</div>
+</body>
+</html>

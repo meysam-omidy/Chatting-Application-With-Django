@@ -1,0 +1,305 @@
+:root{
+    --primary-color: antiquewhite;
+    --secondary-color: #423b3b;
+}
+body{
+    background-color: var(--primary-color);
+}
+#back img{
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    margin-top: 60px;
+    margin-left: 550px;
+    width: 30px;
+}
+#home img{
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    margin-left: 150px;
+    width: 30px;
+}
+#main-div{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    width: 350px;
+    height: 500px;
+    margin-top: 5px;
+    border-radius: 15px;
+    margin-left: 550px;
+    padding: 10px 20px;
+}
+#main-div a{
+    color: var(--primary-color);
+}
+#main-div p{
+    text-align: center;
+}
+#main-div img{
+    margin-left: 125px;
+    border-radius: 50%;
+}
+input[type='file']::file-selector-button{
+    background-color: var(--primary-color);
+}
+input[type='file']{
+    margin-left: 30px;
+}
+#id_username,#id_name,#id_bio{
+    background-color: var(--primary-color);
+    text-decoration-color: var(--secondary-color);
+    margin-bottom: 10px;
+    height: 40px;
+    width: 200px;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-top: 2px;
+}
+#id_name{
+    margin-left: 25px;
+    margin-top: 10px;
+}
+#id_bio{
+    margin-left: 43px;
+}
+#profile_submit{
+    background-color: var(--primary-color);
+    margin-top: 20px;
+    height: 40px;
+    width: 120px;
+    font-size: 15px;
+    margin-left: 120px;
+}
+#profile_submit img{
+    margin-left: 0;
+    width: 16px;
+}
+#profile_submit:hover{
+    cursor: pointer;
+}
+#error{
+    color: var(--secondary-color);
+    text-align: center;
+}
+#friend-div{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    width: 350px;
+    height: 400px;
+    margin-top: 5px;
+    border-radius: 15px;
+    margin-left: 550px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+#friend-div p{
+    text-align: center;
+    font-size: 18px;
+}
+#friend-div img{
+    margin-left: 125px;
+    border-radius: 50%;
+}
+#bottom-div{
+    width: 100%;
+    height: 30px;
+}
+#bottom-div form{
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+#message{
+    background-color: var(--primary-color);
+    width: 80px;
+    height: 30px;
+    margin-left: 90px;
+    border-radius: 7px;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#message a{
+    text-decoration: none;
+    color: var(--secondary-color);
+    font-size: 14px;
+}
+#request,#requested{
+    background-color: var(--primary-color);
+    width: 80px;
+    height: 30px;
+    margin-left: 130px;
+    font-size: 14px;
+    border-radius: 7px;
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+#accept{
+    background-color: var(--primary-color);
+    width: 80px;
+    height: 30px;
+    margin-left: 80px;
+    font-size: 14px;
+    border-radius: 7px;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#reject{
+    background-color: var(--primary-color);
+    width: 80px;
+    height: 30px;
+    margin-left: 20px;
+    font-size: 14px;
+    border-radius: 7px;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+#unfriend{
+    background-color: var(--primary-color);
+    width: 80px;
+    height: 30px;
+    margin-left: 10px;
+    font-size: 14px;
+    border-radius: 7px;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+#requested:hover,#request:hover,#message:hover,#accept:hover,#reject:hover,#unfriend:hover{
+    cursor: pointer;
+}
+@media(max-width: 1100px) {
+    #back img{
+        margin-top: 250px;
+        margin-left: 15%;
+        width: 60px;
+    }
+    #home img{
+        margin-top: 250px;
+        margin-left: 25%;
+        width: 60px;
+    }
+    #main-div{
+        width: 70%;
+        height: 1000px;
+        margin-top: 20px;
+        border-radius: 30px;
+        margin-left: 15%;
+        padding: 30px 0.5rem;
+        font-size: 2.5rem;
+    }
+    #main-div a{
+        font-size: 2.5rem;
+    }
+    #main-div p{
+        text-align: center;
+        font-size: 2.5rem;
+    }
+    #main-div img{
+        width: 200px;
+        height: 200px;
+        margin-left: 230px;
+        border-radius: 50%;
+    }
+    input[type='file']{
+        margin-left: 70px;
+        width: 60%;
+        height: 60px;
+        font-size: 2rem;
+        margin-top: 10px;
+    }
+    input[type='file']::file-selector-button{
+        height: 40px;
+        font-size: 2rem;
+        margin-top: 10px;
+    }
+    #id_username,#id_name,#id_bio{
+        height: 70px;
+        width: 60%;
+        border-radius: 10px;
+        font-size: 2.3rem;
+        margin-top: 10px;
+    }
+    #id_name{
+        margin-left: 66px;
+    }
+    #id_bio{
+        margin-left: 106px;
+    }
+    #profile_submit{
+        margin-top: 40px;
+        height: 80px;
+        width: 40%;
+        font-size: 2rem;
+        margin-left: 30%;
+    }
+    #profile_submit img{
+        display: none;
+    }
+    #error{
+        color: var(--secondary-color);
+        text-align: center;
+    }
+    #friend-div{
+        width: 70%;
+        height: 800px;
+        margin-top: 20px;
+        border-radius: 30px;
+        margin-left: 15%;
+        padding: 30px 0.5rem;
+        font-size: 2.5rem;
+    }
+    #friend-div p{
+        text-align: center;
+        font-size: 2.5rem;
+    }
+    #friend-div img{
+        width: 200px;
+        height: 200px;
+        margin-left: 230px;
+        border-radius: 50%;
+    }
+    #bottom-div{
+        width: 100%;
+        height: 80px;
+    }
+    #bottom-div form{
+        display: grid;
+        grid-template-columns: 50% 50%;
+    }
+    #message{
+        width: 50%;
+        height: 80px;
+        margin-left: 25%;
+        border-radius: 15px;
+    }
+    #message a{
+        text-decoration: none;
+        font-size: 2rem;
+    }
+    #request,#requested{
+        width: 40%;
+        height: 80px;
+        margin-left: 30%;
+        font-size: 2rem;
+        border-radius: 10px;
+    }
+    #accept{
+        width: 50%;
+        height: 80px;
+        margin-left: 25%;
+        font-size: 2rem;
+        border-radius: 10px;
+    }
+    #reject{
+        width: 50%;
+        height: 80px;
+        margin-left: 25%;
+        font-size: 2rem;
+        border-radius: 10px;
+    }
+    #unfriend{
+        width: 50%;
+        height: 80px;
+        margin-left: 25%;
+        font-size: 2rem;
+        border-radius: 10px;
+    }
+}

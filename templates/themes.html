@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/desktop/themes.css' %}">
+    <style>
+        :root{
+            --primary-color: {{ user_theme.color1 }};
+            --secondary-color: {{ user_theme.color2 }};
+        }
+    </style>
+    <title>Themes</title>
+</head>
+<body>
+    <a href="{{ request.META.HTTP_REFERER }}" id="back"><img src="{% static 'images/back.svg' %}"></a>
+    <a href="{% url 'home' %}" id="home"><img src="{% static 'images/home.svg' %}"></a>
+    <div id="main-div">
+        <p>Themes</p>
+        <form method="post" action="">
+            {% csrf_token %}
+            {% for theme in themes %}
+                <div class="theme">
+                    {% if user_theme.name == theme.name %}
+                        <input type="radio" checked name="theme" value="{{ theme.name }}" class="checkbox">
+                    {% else %}
+                        <input type="radio" name="theme" value="{{ theme.name }}" class="checkbox">
+                    {% endif %}
+                    <div style="background-color: {{ theme.color1 }};border: 1px solid {{ theme.color2 }}" class="square"></div>
+                    <div style="background-color: {{ theme.color2 }};border: 1px solid {{ theme.color1 }}" class="square"></div>
+                    <div style="background-color: {{ theme.color3 }}" class="square"></div>
+                </div>
+            {% endfor %}
+            <input type="submit" value="Apply Theme" id="submit">
+        </form>
+    </div>
+</body>
+</html>

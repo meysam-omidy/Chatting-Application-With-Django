@@ -1,0 +1,90 @@
+@media (orientation: portrait) {
+    #login-form{
+        background-color: var(--secondary-color);
+        margin-top: 50vh;
+        margin-left: 50vw;
+        width: 60vw;
+        height: 50vh;
+        transform: translate(-50%,-50%);
+        border-radius: 3%;
+        padding: 2vh 2vw;
+        text-align: center;
+    }
+    #login-form input::placeholder{
+        color: var(--secondary-color);
+    }
+    #login-form p{
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        /*font-size: 17px;*/
+    }
+    #login-form a{
+        color: var(--primary-color);
+        font-size: 2.5rem;
+    }
+    #login-username,#login-password{
+        background-color: var(--primary-color);
+        text-decoration-color: var(--secondary-color);
+        height: 12%;
+        width: 70%;
+        border-radius: 1vw;
+        font-size: 2.5rem;
+        margin-top: 1%;
+    }
+    #login-submit{
+        background-color: var(--primary-color);
+        height: 12%;
+        margin-top: 1vh;
+        width: 40%;
+        font-size: 2.5rem;
+    }
+    #login-submit img{
+        display: none;
+        width: 16px;
+    }
+    #login-submit:hover{
+        cursor: pointer;
+    }
+    #register_form{
+        background-color: var(--secondary-color);
+        /*width: 250px;*/
+        margin-top: 50vh;
+        margin-left: 50vw;
+        width: 60vw;
+        height: 60vh;
+        transform: translate(-50%,-50%);
+        border-radius: 3%;
+        padding: 2vh 2vw;
+        text-align: center;
+    }
+    #register_form input::placeholder{
+        color: var(--secondary-color);
+    }
+    #id_name,#id_username,#id_password1,#id_password2{
+        background-color: var(--primary-color);
+        text-decoration-color: var(--secondary-color);
+        height: 10%;
+        width: 70%;
+        border-radius: 1vw;
+        font-size: 2.5rem;
+        margin-top: 1%;
+    }
+    #register_form p,#register_form a{
+        color: var(--primary-color);
+        font-size: 2.5rem
+    }
+    #register-submit{
+        background-color: var(--primary-color);
+        height: 11%;
+        margin-top: 1vh;
+        width: 40%;
+        font-size: 2.5rem;
+    }
+    #register-submit img{
+        display: none;
+    }
+    #register-submit:hover{
+        cursor: pointer;
+    }
+
+}
