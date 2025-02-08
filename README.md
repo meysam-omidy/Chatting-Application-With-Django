@@ -27,3 +27,11 @@ python manage.py createsuperuser # to create admin user
 python manage.py runserver
 ```
 Then go to http://127.0.0.1:8000/ and perform registeration of new user or logging in to another account
+
+## Features To Add In The Future
+- mobile responsivity
+- more themes
+- voice and video sending
+- user settings for privacy
+- and more features required for better chatting experience
+
